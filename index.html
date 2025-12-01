@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adventskalender – Luca & Neo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --accent: #f5d76e;
+      --accent-soft: #f9e7a8;
+      --door: #c0392b;
+      --door-dark: #962d22;
+      --text: #f7f7f7;
+      --open-bg: #1d2738;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #273c75, #0b1020);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wrapper {
+      max-width: 1000px;
+      width: 100%;
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      color: var(--accent-soft);
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: rgba(250, 250, 250, 0.75);
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      perspective: 1200px;
+    }
+
+    @media (max-width: 700px) {
+      .calendar {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .door {
+      position: relative;
+      height: 110px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--door), var(--door-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .door:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+    }
+
+    .door-number {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-soft);
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .door.locked {
+      cursor: default;
+      background: linear-gradient(135deg, #444, #222);
+    }
+
+    .door.locked .door-number {
+      color: #bbb;
+    }
+
+    .info {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .info-strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Overlay / Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 16px;
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .detail-panel {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(6, 12, 24, 0.96);
+      border-radius: 12px;
+      padding: 16px 18px 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: popup 0.18s ease-out;
+    }
+
+    @keyframes popup {
+      from {
+        transform: translateY(8px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .detail-title {
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+
+    .detail-close {
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 2px 4px;
+      line-height: 1;
+    }
+
+    .detail-close:hover {
+      color: #fff;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 800px) {
+      .detail-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .detail-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .detail-image {
+      border-radius: 8px;
+      border: 1px dashed rgba(255, 255, 255, 0.25);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding: 10px;
+    }
+
+    .detail-image img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <h1>Luca & Neo – Adventskalender</h1>
+  <p class="subtitle">Jeden Tag ein neues Stück Geschichte. ✨</p>
+
+  <div class="calendar" id="calendar"></div>
+
+  <p class="info">
+    Türen sind basierend auf dem lokalen Datum deines Geräts freigeschaltet.
+    <span class="info-strong" id="todayLabel"></span>
+  </p>
+</div>
+
+<!-- Overlay / Modal -->
+<div class="overlay" id="overlay">
+  <div class="detail-panel" role="dialog" aria-modal="true">
+    <div class="detail-header">
+      <div class="detail-title" id="detailTitle"></div>
+      <button class="detail-close" id="closeOverlay" aria-label="Schließen">×</button>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-text" id="detailText"></div>
+      <div class="detail-image" id="detailImage">
+        <!-- Bild oder Platzhalter wird per JS eingefügt -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Texte für die Türchen
+  const stories = {
+    1: `Luca hat heute schon wieder schulfrei.
+
+Wegen des allgegenwärtigen Lehrermangels hätte er ohnehin nur Geschichtsunterricht gehabt und nur dafür extra in die Schule zu kommen, hätte sich wirklich nicht gelohnt.
+
+Nun sitzt er mit Neo am Rande des Weihnachtsmarkts, trinkt trotz der eisigen Kälte einen kalten Energydrink und beobachtet das bunte Gewimmel um sie herum.`,
+
+    2: `„Koffein ist wie ein Kredit, weißt du? Das Ding tut so, als würde es dir Energie schenken. Dabei leiht es sie dir nur von später“, erklärte Neo.
+
+„Ey, kannst du mir mal meinen Spaß lassen? Ich habe schon zwei Eltern zu Hause, für die ich übrigens auch noch dringend ein Geschenk brauche.“
+
+„Das ist so typisch Gen Z. Einen Tag vor Heiligabend fällt ihnen ein, dass sie Geschenke brauchen. Ich finde, das spricht Bände über diese Generation, den Zustand unseres Landes, die wirtschaftliche Lage …“
+
+Luca schaute ihn an, als würde er ihm gleich den Energydrink an den Kopf werfen.`,
+
+    3: `„Junge, ich versuche nur ein Geschenk zu finden, nicht den Weltfrieden. Außerdem kann ich nichts dafür, dass alle Erwachsenen die Modernisierung des Bildungssystems verpennt haben. Und die des Arbeitsmarkts. Und die Digitalisierung.“
+
+„Kein Grund, sich aufzuregen“, sagte Neo und flog ein Stück höher, um dem potenziellen Flugobjekt auszuweichen.
+
+„Ich rege mich nicht auf. Dafür ist es vierzehn Jahre zu spät. Eigentlich war es schon zu spät, als ich das erste Mal das Licht dieser Welt erblickt habe. Ich wurde nie gefragt, ob ich hier sein will. Und jetzt muss ich auch noch Geschenke kaufen.“`,
+
+    4: `„Ja, ich sehe schon, du bist die Ruhe selbst.“
+
+Die Red-Bull-Dose sirrte knapp an Neos Schläfe vorbei.
+
+„Hey, hey, Kleiner. Halt mal den Ball flach und deinen Red Bull auf den Boden. Ich hab schon Flügel.“
+
+„Du magst unsterblich sein, aber dein Humor ist einfach tot“, grummelte Luca.
+
+„Ist ja schon gut. Ich helfe dir mit deinem Unglück. Du musst ja nicht so um dich schlagen.“`,
+
+    5: `Neo breitete anmutig die Flügel aus und der goldene Schimmer, der sonst immer von ihm ausging, wurde zu gleißend hellem Licht.
+
+Luca spürte, wie er den Boden unter den Füßen verlor und sich ihm der Magen umdrehte. Er fiel durch einen Strudel warmer Farben, die ohne Zweifel noch vom Weihnachtsmarkt ausgingen.
+
+Dann, plötzlich, spürte er wieder Boden.`,
+
+    6: `Luca stützte atemlos die Hände auf die Knie, beugte sich vor und erbrach, röchelnd, ein Kunstwerk in den soeben noch makellosen Schnee.
+
+„Agggh“, krächzte er. „Ist das dein Ernst? Kannst du das – keine Ahnung – nur einmal vorher ansagen? Mir wird kotzübel, wenn du einfach so durch die Zeit hüpfst.“
+
+Neo erwiderte etwas, aber Luca hörte nicht zu. Er legte den Kopf in den Nacken und starrte die Mauer direkt vor seiner Nase hinauf.
+
+Eine Stadtmauer, ohne Zweifel.
+
+„Wo sind wir?“`,
+
+    7: `„Also, der erste Eindruck schreit Mittelalter“, meinte Neo gelassen. „Die Geschichtsstunde heute hätte dir nicht geschadet, was?“
+
+„Wo und wann genau?“
+
+„Weiß ich selbst nicht. Wo wäre da mein Spaß?“
+
+Nicht weit entfernt sahen sie Menschenmassen, die sich durch ein hölzernes Stadttor schoben.
+
+„Ich weiß auf jeden Fall, dass man hier schon für weniger als einen fliegenden Begleiter, der heller als eine Straßenlaterne leuchtet, auf dem Scheiterhaufen landet“, flüsterte Luca, während sie sich von den Massen durch das Tor tragen ließen.
+
+„Schutzengel hin oder her – ich bin so froh, dass andere dich nicht sehen können. Verrätst du mir eigentlich auch noch, was wir hier vorhaben?“
+
+„Na, ich helfe dir, das Richtige für deine Eltern zu finden“, sagte Neo.`,
+
+    8: `„Soll ich ihnen die Pest mitbringen?“, erwiderte Luca spöttisch, als sie durch das Tor in eine Welt voller unbekannter Geräusche, Gerüche und fremder Gestalten eintauchten.
+
+Der Kontrast zu dem eben noch funkelnden Weihnachtsmarkt traf ihn härter als der Zeitsprung.
+
+Windschiefe Stände drängten sich dicht an dicht, als würden sie nur im Verbund stehen bleiben. Zwischen ihnen schoben sich Menschen und Tiere durch die einfallende Dämmerung, die nur von Laternen und Fackeln gebrochen wurde.
+
+Neo hatte Lucas Bemerkungen mit einer Professionalität ignoriert, die auf Jahrhunderte an Erfahrung mit frechen Schutzkindern schließen ließ. Er selbst schaute sich interessiert um.`,
+
+    9: `„Zugegeben“, sagte Luca, während er interessiert einen Stand mit Honigkuchen musterte, „die Idee, hier etwas für meine Eltern zu kaufen, ist genial. Egal, was ich mitnehme – es ist ein Unikat.“
+
+„Vielleicht“, Neo lächelte schräg, „aber Bedeutung entsteht nicht durch Seltenheit. Bedeutung lebt oft in Dingen, die auf den ersten Blick nichts Besonderes sind.“
+
+Luca schnaubte verächtlich. „Du hast recht. Vielleicht sollte ich ihnen einfach eine besonders bedeutsame Handvoll Stroh mitbringen oder so.“
+
+Er griff dabei in die Krippe einer meckernden Ziege.
+
+„Hey, Junge! Finger weg!“, rief es hinter ihm.`,
+
+    10: `Luca fuhr herum und fand sich auf Augenhöhe mit der Lederschürze des Mannes wieder – weiter oben ging’s erst später weiter. Instinktiv trat er zwei Schritte zurück und kniff die Augen zusammen, um das rußverschmierte Gesicht zu erkennen, das hoch über ihm thronte.
+
+„Oh, Junge …“, hörte er Neo hinter sich seufzen.
+
+„Was erlaubst du dir, Junge?“, donnerte der Mann.
+
+„Ich, äh …“
+
+„Willst du, dass ich dir die Ohren langziehe?“`,
+
+    11: `„Nein, bitte nicht“, dachte Luca panisch und musste unwillkürlich an Ilvi denken, die ihm vor zwei Jahren gnadenlos ehrlich gesagt hatte, dass er ganz allein die Energiewende bewältigen könne, da seine Ohren massives Windkraftpotenzial hätten.
+
+Seitdem waren seine Ohren ein sensibles Thema.
+
+Neo, der das ganz genau wusste, konnte sich ein Prusten kaum verkneifen, besann sich aber angesichts der angespannten Lage und schnipste barmherzig mit den Fingern.
+
+Luca spürte, wie seine Hand gepackt wurde, und noch bevor er wusste, wie ihm geschah, zog ihn ein Junge, kaum größer als er, vom Stand weg – weg von dem rußgesichtigen Mann, der ihnen sofort hinterherstürzen wollte, nun aber – wie durch ein Wunder – plötzlich den Strick um den Hals trug, mit dem gerade noch die Ziege an die Krippe gebunden gewesen war, die nun munter meckernd in Richtung Freiheit wackelte.`
+  };
+
+  // Bilder für die Türchen
+  // Lege die Dateien in denselben Ordner wie index.html
+  const images = {
+    1: "1.jpg"
+    // z.B. später:
+    // 2: "bild-tuer2.png",
+    // 3: "neo-und-luca.jpg",
+    // ...
+  };
+
+  // Datum / Freischaltung
+  function getTodayInfo() {
+    const now = new Date();
+    return {
+      day: now.getDate(),
+      month: now.getMonth(),
+      year: now.getFullYear()
+    };
+  }
+
+  const { day: todayDay, month: todayMonth, year: todayYear } = getTodayInfo();
+
+  // echte Advent-Logik:
+  const isDecember = todayMonth === 11; // 11 = Dezember
+  const maxOpenDay = isDecember ? Math.min(todayDay, 24) : 0;
+
+  // 👉 Zum Testen ALLES freischalten:
+  // const isDecember = true;
+  // const maxOpenDay = 24;
+
+  const calendarEl = document.getElementById("calendar");
+  const todayLabel = document.getElementById("todayLabel");
+  const overlay = document.getElementById("overlay");
+  const detailTitle = document.getElementById("detailTitle");
+  const detailText = document.getElementById("detailText");
+  const detailImage = document.getElementById("detailImage");
+  const closeOverlayBtn = document.getElementById("closeOverlay");
+
+  if (isDecember) {
+    todayLabel.textContent = `Heute ist der ${todayDay}. Dezember ${todayYear}.`;
+  } else {
+    todayLabel.textContent = `Der Kalender schaltet Türchen im Dezember frei.`;
+  }
+
+  function isDoorUnlocked(dayNumber) {
+    return isDecember && dayNumber <= maxOpenDay;
+  }
+
+  // Türen erzeugen
+  for (let i = 1; i <= 24; i++) {
+    const door = document.createElement("div");
+    door.classList.add("door");
+    door.dataset.day = i.toString();
+
+    const num = document.createElement("div");
+    num.classList.add("door-number");
+    num.textContent = i.toString();
+    door.appendChild(num);
+
+    if (!isDoorUnlocked(i)) {
+      door.classList.add("locked");
+    }
+
+    door.addEventListener("click", () => {
+      if (!isDoorUnlocked(i)) {
+        alert(`Dieses Türchen kannst du erst am ${i}. Dezember öffnen.`);
+        return;
+      }
+
+      detailTitle.textContent = `Türchen ${i}`;
+      detailText.textContent = stories[i] || `Für dieses Türchen ist noch kein Text hinterlegt.`;
+
+      const imgSrc = images[i];
+      if (imgSrc) {
+        detailImage.innerHTML = `<img src="${imgSrc}" alt="Bild zu Türchen ${i}">`;
+      } else {
+        detailImage.innerHTML = `Hier kommt später das Bild zu Türchen ${i} hin. 🎨`;
+      }
+
+      overlay.classList.add("visible");
+    });
+
+    calendarEl.appendChild(door);
+  }
+
+  function closeOverlay() {
+    overlay.classList.remove("visible");
+  }
+
+  closeOverlayBtn.addEventListener("click", closeOverlay);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      closeOverlay();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeOverlay();
+    }
+  });
+</script>
+</body>
+</html>
