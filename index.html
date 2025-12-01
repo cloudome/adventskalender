@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -36,6 +37,19 @@
       max-width: 1000px;
       width: 100%;
       position: relative;
+    }
+
+    .calendar-background {
+      position: absolute;
+      inset: 0;
+      background-image: url("1cover.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.28;
+      z-index: 0;
+      border-radius: 10px;
+      filter: blur(1px);
     }
 
     h1 {
@@ -224,6 +238,7 @@
 </head>
 <body>
 <div class="wrapper">
+     <div class="calendar-background"></div>
   <h1>Luca & Neo – Adventskalender</h1>
   <p class="subtitle">Jeden Tag ein neues Stück Geschichte. ✨</p>
 
