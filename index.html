@@ -81,6 +81,19 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
+    .door.past {
+  background: none;               /* Entfernt das rote Gradient */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Zahl ausblenden, wenn die Tür „offen“ ist */
+.door.past .door-number {
+  display: none;
+}
+
+
     .door:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
@@ -258,13 +271,13 @@
 
 Wegen des allgegenwärtigen Lehrermangels hätte er ohnehin nur Geschichtsunterricht gehabt und dafür extra in die Schule zu kommen, hätte sich wirklich nicht gelohnt.
 
-Nun sitzt er mit Neo am Rande des Weihnachtsmarkts, trinkt trotz des eisigen Wetters einen kalten Energydrink und dabei beobachtet das bunte Gewimmel um sie herum.`,
+Nun sitzt er mit Neo am Rande des Weihnachtsmarkts, trinkt trotz des eisigen Wetters einen kalten Energydrink und beobachtet dabei das bunte Gewimmel um sie herum.`,
 
     2: `„Koffein ist wie ein Kredit, weißt du? Tut so, als würde es dir Energie schenken. Dabei leiht es sie dir nur von später“, belehrte Neo.
 
 „Ey, kannst du mir mal meinen Spaß lassen?“, stöhnte Luca. „Ich hab schon zwei Eltern zuhause, die mich..Ohje, ich brauche dringend noch ein Geschenk für die beiden.“
 
-„Ja, typisch Gen Z“, murmelte Neo. „Einen Tag vor Heiligabend fällt ihnen ein, dass Weihnachten ist. Ich finde, das spricht Bände über diese Generation, den Zustand unseres Landes, die wirtschaftliche Lage...“
+„Ja, typisch Gen Z“, murmelte Neo. „Einen Tag vor Heiligabend fällt ihnen ein, dass sie Geschenke brauchen. Ich finde, das spricht Bände über diese Generation, den Zustand unseres Landes, die wirtschaftliche Lage...“
 
 Luca schaute ihn an, als würde er ihm gleich die Dose an den Kopf werfen.`,
 
@@ -397,7 +410,7 @@ const images = {
     return isDecember && dayNumber <= maxOpenDay;
   }
 
-  // Türen erzeugen
+    // Türen erzeugen
   for (let i = 1; i <= 24; i++) {
     const door = document.createElement("div");
     door.classList.add("door");
@@ -408,10 +421,21 @@ const images = {
     num.textContent = i.toString();
     door.appendChild(num);
 
+    // Tür-Zustand: gesperrt oder offen
     if (!isDoorUnlocked(i)) {
       door.classList.add("locked");
+    } else {
+      // 👉 Vergangene Tage: Bild als „offene Tür“
+      if (i < todayDay) {
+        const imgSrc = images[i];
+        if (imgSrc) {
+          door.classList.add("past");
+          door.style.backgroundImage = `url("${imgSrc}")`;
+        }
+      }
     }
 
+    // Klick-Verhalten bleibt wie bisher: Text + Bild im Overlay
     door.addEventListener("click", () => {
       if (!isDoorUnlocked(i)) {
         alert(`Dieses Türchen kannst du erst am ${i}. Dezember öffnen.`);
@@ -454,4 +478,3 @@ const images = {
 </script>
 </body>
 </html>
-
