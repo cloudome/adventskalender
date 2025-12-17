@@ -21,6 +21,16 @@
       padding: 0;
     }
 
+    html, body {
+      height: 100%;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;   /* extrem wichtig für Mobile */
+      width: 100%;
+    }
+
     body {
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -82,17 +92,15 @@
     }
 
     .door.past {
-  background: none;               /* Entfernt das rote Gradient */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+      background: none;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
 
-/* Zahl ausblenden, wenn die Tür „offen“ ist */
-.door.past .door-number {
-  display: none;
-}
-
+    .door.past .door-number {
+      display: none;
+    }
 
     .door:hover {
       transform: translateY(-2px);
@@ -127,43 +135,41 @@
       font-weight: 600;
     }
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  padding: 16px;
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 16px;
 
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
 
     .overlay.visible {
       display: flex;
     }
 
-.detail-panel {
-  max-width: 900px;
-  width: 100%;
-  background: rgba(6, 12, 24, 0.96);
-  border-radius: 12px;
-  padding: 16px 18px 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: popup 0.18s ease-out;
+    .detail-panel {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(6, 12, 24, 0.96);
+      border-radius: 12px;
+      padding: 16px 18px 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: popup 0.18s ease-out;
 
-  max-height: calc(100vh - 32px);
-  overflow-y: auto;
-}
-
-
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
 
     @keyframes popup {
       from {
@@ -247,7 +253,7 @@
 <body>
 <div class="wrapper">
   <h1>Luca & Neo – Eine Adventsgeschichte</h1>
-  <p class="subtitle">Illustriert von Salome, geschrieben von Claudius. </p>
+  <p class="subtitle">Illustriert von Salome, geschrieben von Claudius.</p>
 
   <div class="calendar" id="calendar"></div>
 
@@ -257,7 +263,6 @@
   </p>
 </div>
 
-<!-- Overlay / Modal -->
 <div class="overlay" id="overlay">
   <div class="detail-panel" role="dialog" aria-modal="true">
     <div class="detail-header">
@@ -266,15 +271,12 @@
     </div>
     <div class="detail-grid">
       <div class="detail-text" id="detailText"></div>
-      <div class="detail-image" id="detailImage">
-        <!-- Bild oder Platzhalter wird per JS eingefügt -->
-      </div>
+      <div class="detail-image" id="detailImage"></div>
     </div>
   </div>
 </div>
 
 <script>
-  // Texte für die Türchen
   const stories = {
     1: `Luca hat heute schon wieder schulfrei.
 
@@ -480,163 +482,92 @@ Er kannte das alles.
 
 „Warte mal…“, murmelte er.
 
-Das war seine Stadt.`,
-
-
+Das war seine Stadt.`
   };
 
-  // Bilder für die Türchen
-const images = {
-  1: "1.jpg",
-  2: "2.jpeg",
-  3: "3.jpeg",
-  4: "4.jpg",
-  5: "5.jpg",
-  6: "6.jpg",
-  7: "7.jpg",
-  8: "8.jpg",
-  9: "9.jpg",
-  10: "10.jpg",
-  11: "11.jpg",
-  12: "12.jpg",
-  13: "13.jpg",
-  14: "14.jpg",
-  15: "15.JPG",
-  16: "16.jpg",
-  17: "17.jpg",
-  18: "18.jpg",
-  19: "19.jpg",
-  20: "20.jpg",
-  21: "21.jpg",
-  22: "22.jpg",
-  23: "23.jpg",
-  24: "24.jpg"
-};
-  // Datum / Freischaltung
-  function getTodayInfo() {
-    const now = new Date();
-    return {
-      day: now.getDate(),
-      month: now.getMonth(),
-      year: now.getFullYear()
-    };
-  }
+  const images = {
+    1: "1.jpg", 2: "2.jpeg", 3: "3.jpeg", 4: "4.jpg",
+    5: "5.jpg", 6: "6.jpg", 7: "7.jpg", 8: "8.jpg",
+    9: "9.jpg", 10: "10.jpg", 11: "11.jpg", 12: "12.jpg",
+    13: "13.jpg", 14: "14.jpg", 15: "15.JPG", 16: "16.jpg",
+    17: "17.jpg", 18: "18.jpg", 19: "19.jpg", 20: "20.jpg",
+    21: "21.jpg", 22: "22.jpg", 23: "23.jpg", 24: "24.jpg"
+  };
 
-  const { day: todayDay, month: todayMonth, year: todayYear } = getTodayInfo();
-
-  // echte Advent-Logik:
-  const isDecember = todayMonth === 11; // 11 = Dezember
+  const now = new Date();
+  const todayDay = now.getDate();
+  const isDecember = now.getMonth() === 11;
   const maxOpenDay = isDecember ? Math.min(todayDay, 24) : 0;
 
-  // 👉 Zum Testen ALLES freischalten:
-  // const isDecember = true;
-  // const maxOpenDay = 24;
-
   const calendarEl = document.getElementById("calendar");
-  const todayLabel = document.getElementById("todayLabel");
   const overlay = document.getElementById("overlay");
   const detailTitle = document.getElementById("detailTitle");
   const detailText = document.getElementById("detailText");
   const detailImage = document.getElementById("detailImage");
   const closeOverlayBtn = document.getElementById("closeOverlay");
+  const todayLabel = document.getElementById("todayLabel");
 
-  if (isDecember) {
-    todayLabel.textContent = `Heute ist der ${todayDay}. Dezember ${todayYear}.`;
-  } else {
-    todayLabel.textContent = `Der Kalender schaltet Türchen im Dezember frei.`;
+  todayLabel.textContent = isDecember
+    ? `Heute ist der ${todayDay}. Dezember.`
+    : `Der Kalender schaltet Türchen im Dezember frei.`;
+
+  function isDoorUnlocked(day) {
+    return isDecember && day <= maxOpenDay;
   }
 
-  function isDoorUnlocked(dayNumber) {
-    return isDecember && dayNumber <= maxOpenDay;
-  }
-
-    // Türen erzeugen
   for (let i = 1; i <= 24; i++) {
     const door = document.createElement("div");
-    door.classList.add("door");
-    door.dataset.day = i.toString();
+    door.className = "door";
 
     const num = document.createElement("div");
-    num.classList.add("door-number");
-    num.textContent = i.toString();
+    num.className = "door-number";
+    num.textContent = i;
     door.appendChild(num);
 
-    // Tür-Zustand: gesperrt oder offen
     if (!isDoorUnlocked(i)) {
       door.classList.add("locked");
-    } else {
-      // 👉 Vergangene Tage: Bild als „offene Tür“
-      if (i < todayDay) {
-        const imgSrc = images[i];
-        if (imgSrc) {
-          door.classList.add("past");
-          door.style.backgroundImage = `url("${imgSrc}")`;
-        }
-      }
+    } else if (i < todayDay && images[i]) {
+      door.classList.add("past");
+      door.style.backgroundImage = `url("${images[i]}")`;
     }
 
-    // Klick-Verhalten bleibt wie bisher: Text + Bild im Overlay
-    door.addEventListener("click", () => {
-      if (!isDoorUnlocked(i)) {
-        alert(`Dieses Türchen kannst du erst am ${i}. Dezember öffnen.`);
-        return;
-      }
-
+    door.onclick = () => {
+      if (!isDoorUnlocked(i)) return;
       detailTitle.textContent = `Türchen ${i}`;
-      detailText.textContent = stories[i] || `Für dieses Türchen ist noch kein Text hinterlegt.`;
-
-      const imgSrc = images[i];
-      if (imgSrc) {
-        detailImage.innerHTML = `<img src="${imgSrc}" alt="Bild zu Türchen ${i}">`;
-      } else {
-        detailImage.innerHTML = `Hier kommt später das Bild zu Türchen ${i} hin. 🎨`;
-      }
-
+      detailText.textContent = stories[i] || "Heute war ich faul.";
+      detailImage.innerHTML = images[i]
+        ? `<img src="${images[i]}" alt="">`
+        : "Heute war die Salo faul";
       openOverlay();
-    });
+    };
 
     calendarEl.appendChild(door);
   }
 
- function openOverlay() {
-  overlay.classList.add("visible");
-  document.body.style.overflow = "hidden";
-}
+  let scrollY = 0;
 
-function closeOverlay() {
-  overlay.classList.remove("visible");
-  document.body.style.overflow = "";
-}
+  function openOverlay() {
+    scrollY = window.scrollY;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
+    overlay.classList.add("visible");
+  }
 
+  function closeOverlay() {
+    overlay.classList.remove("visible");
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, scrollY);
+  }
 
-  closeOverlayBtn.addEventListener("click", closeOverlay);
+  closeOverlayBtn.onclick = closeOverlay;
+  overlay.onclick = e => e.target === overlay && closeOverlay();
 
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-      closeOverlay();
-    }
-  });
+  overlay.addEventListener("touchmove", e => {
+    if (!e.target.closest(".detail-panel")) e.preventDefault();
+  }, { passive: false });
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeOverlay();
-    }
-  });
+  document.addEventListener("keydown", e => e.key === "Escape" && closeOverlay());
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
