@@ -270,6 +270,19 @@
     margin-top: 10px;
   }
 }
+    .detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  /* damit beim Scrollen nichts "durchscheint" */
+  background: rgba(6, 12, 24, 0.96);
+
+  /* etwas Luft und eine Trennlinie */
+  padding: 6px 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
   </style>
 </head>
 <body>
@@ -293,8 +306,8 @@
       <button class="detail-close" id="closeOverlay" aria-label="Schließen">×</button>
     </div>
     <div class="detail-grid">
-      <div class="detail-text" id="detailText"></div>
       <div class="detail-image" id="detailImage"></div>
+      <div class="detail-text" id="detailText"></div>
     </div>
   </div>
 </div>
@@ -695,6 +708,7 @@ verschwand er im Strudel der Zeit.`
 </script>
 </body>
 </html>
+
 
 
 
