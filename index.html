@@ -37,8 +37,8 @@
       background: radial-gradient(circle at top, #273c75, #0b1020);
       color: var(--text);
       display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
@@ -247,7 +247,17 @@
       height: auto;
       display: block;
       border-radius: 6px;
-    }
+    } 
+    @media (max-width: 800px) {
+  body {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .wrapper {
+    margin-top: 10px;
+  }
+}
   </style>
 </head>
 <body>
@@ -656,6 +666,7 @@ Dann formten sich aus dem warmen Schein zwei freche Flügel.
 </script>
 </body>
 </html>
+
 
 
 
