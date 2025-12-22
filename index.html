@@ -157,7 +157,7 @@
       z-index: 20;
       padding: 16px;
 
-      overflow: auto;
+      overflow: hidden;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
     }
@@ -179,7 +179,7 @@
       animation: popup 0.18s ease-out;
 
       max-height: calc(100vh - 32px);
-      overflow: auto;
+      overflow: hidden;
       overscroll-behavior: contain;
     }
 
@@ -270,10 +270,16 @@
     margin-top: 10px;
   }
 }
-    .detail-header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(6, 12, 24, 0.96);
+}
+
 
   /* damit beim Scrollen nichts "durchscheint" */
   background: rgba(6, 12, 24, 0.96);
@@ -282,9 +288,14 @@
   padding: 6px 0 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
-.detail-grid > :first-child {
-  margin-top: 100px; /* an Headerhöhe anpassen */
+    .detail-body {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-top: 12px;
 }
+
 
   </style>
 </head>
@@ -711,6 +722,7 @@ verschwand er im Strudel der Zeit.`
 </script>
 </body>
 </html>
+
 
 
 
