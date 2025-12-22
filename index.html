@@ -279,15 +279,6 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(6, 12, 24, 0.96);
 }
-
-
-  /* damit beim Scrollen nichts "durchscheint" */
-  background: rgba(6, 12, 24, 0.96);
-
-  /* etwas Luft und eine Trennlinie */
-  padding: 6px 0 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
     .detail-body {
   flex: 1;
   overflow: auto;
@@ -295,7 +286,11 @@
   overscroll-behavior: contain;
   padding-top: 12px;
 }
-
+.detail-body {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
   </style>
 </head>
@@ -319,10 +314,12 @@
       <div class="detail-title" id="detailTitle"></div>
       <button class="detail-close" id="closeOverlay" aria-label="Schließen">×</button>
     </div>
-    <div class="detail-grid">
-      <div class="detail-image" id="detailImage"></div>
-      <div class="detail-text" id="detailText"></div>
-    </div>
+   <div class="detail-body">
+  <div class="detail-grid">
+    <div class="detail-image" id="detailImage"></div>
+    <div class="detail-text" id="detailText"></div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -714,14 +711,16 @@ verschwand er im Strudel der Zeit.`
   closeOverlayBtn.onclick = closeOverlay;
   overlay.onclick = e => e.target === overlay && closeOverlay();
 
-  overlay.addEventListener("touchmove", e => {
-    if (!e.target.closest(".detail-panel")) e.preventDefault();
-  }, { passive: false });
+overlay.addEventListener("touchmove", e => {
+  if (!e.target.closest(".detail-body")) e.preventDefault();
+}, { passive: false });
+
 
   document.addEventListener("keydown", e => e.key === "Escape" && closeOverlay());
 </script>
 </body>
 </html>
+
 
 
 
