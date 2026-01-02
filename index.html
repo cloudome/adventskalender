@@ -678,7 +678,7 @@ Außerdem war morgen ja auch noch ein Tag.`
   const now = new Date();
   const todayDay = now.getDate();
   const isDecember = now.getMonth() === 11;
-  const maxOpenDay = isDecember ? Math.min(todayDay, 24) : 0;
+  const maxOpenDay = 24;
 
   const calendarEl = document.getElementById("calendar");
   const overlay = document.getElementById("overlay");
@@ -687,6 +687,41 @@ Außerdem war morgen ja auch noch ein Tag.`
   const detailImage = document.getElementById("detailImage");
   const closeOverlayBtn = document.getElementById("closeOverlay");
   const todayLabel = document.getElementById("todayLabel");
+
+  todayLabel.textContent = `Alle Türchen sind freigeschaltet.`;
+
+  function isDoorUnlocked(day) {
+    return <= maxOpenDay;
+  }
+
+  for (let i = 1; i <= 24; i++) {
+    const door = document.createElement("div");
+    door.className = "door";
+
+    const num = document.createElement("div");
+    num.className = "door-number";
+    num.textContent = i;
+    door.appendChild(num);
+
+    if (!isDoorUnlocked(i)) {
+      door.classList.add("locked");
+    } else if (i < todayDay && images[i]) {
+      door.classList.add("past");
+      door.style.backgroundImage = `url("${images[i]}")`;
+    }
+
+    door.onclick = () => {
+      if (!isDoorUnlocked(i)) return;
+      detailTitle.textContent = `Türchen ${i}`;
+      detailText.textContent = stories[i] || "Heute war ich faul.";
+      detailImage.innerHTML = images[i]
+        ? `<img src="${images[i]}" alt="">`
+        : "Heute war die Salo faul";
+      openOverlay();
+    };
+
+    calendarEl.appendChild(door);
+  }
 
   let scrollY = 0;
 
@@ -716,6 +751,7 @@ overlay.addEventListener("touchmove", e => {
 </script>
 </body>
 </html>
+
 
 
 
