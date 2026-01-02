@@ -688,43 +688,6 @@ Außerdem war morgen ja auch noch ein Tag.`
   const closeOverlayBtn = document.getElementById("closeOverlay");
   const todayLabel = document.getElementById("todayLabel");
 
-  todayLabel.textContent = isDecember
-    ? `Heute ist der ${todayDay}. Dezember.`
-    : `Der Kalender schaltet Türchen im Dezember frei.`;
-
-  function isDoorUnlocked(day) {
-    return isDecember && day <= maxOpenDay;
-  }
-
-  for (let i = 1; i <= 24; i++) {
-    const door = document.createElement("div");
-    door.className = "door";
-
-    const num = document.createElement("div");
-    num.className = "door-number";
-    num.textContent = i;
-    door.appendChild(num);
-
-    if (!isDoorUnlocked(i)) {
-      door.classList.add("locked");
-    } else if (i < todayDay && images[i]) {
-      door.classList.add("past");
-      door.style.backgroundImage = `url("${images[i]}")`;
-    }
-
-    door.onclick = () => {
-      if (!isDoorUnlocked(i)) return;
-      detailTitle.textContent = `Türchen ${i}`;
-      detailText.textContent = stories[i] || "Heute war ich faul.";
-      detailImage.innerHTML = images[i]
-        ? `<img src="${images[i]}" alt="">`
-        : "Heute war die Salo faul";
-      openOverlay();
-    };
-
-    calendarEl.appendChild(door);
-  }
-
   let scrollY = 0;
 
   function openOverlay() {
@@ -753,6 +716,7 @@ overlay.addEventListener("touchmove", e => {
 </script>
 </body>
 </html>
+
 
 
 
