@@ -691,7 +691,7 @@ Außerdem war morgen ja auch noch ein Tag.`
   todayLabel.textContent = `Alle Türchen sind freigeschaltet.`;
 
   function isDoorUnlocked(day) {
-    return <= maxOpenDay;
+    return day <= maxOpenDay;
   }
 
   for (let i = 1; i <= 24; i++) {
@@ -705,7 +705,7 @@ Außerdem war morgen ja auch noch ein Tag.`
 
     if (!isDoorUnlocked(i)) {
       door.classList.add("locked");
-    } else if (i < todayDay && images[i]) {
+    } else if (images[i]) {
       door.classList.add("past");
       door.style.backgroundImage = `url("${images[i]}")`;
     }
@@ -751,6 +751,7 @@ overlay.addEventListener("touchmove", e => {
 </script>
 </body>
 </html>
+
 
 
 
